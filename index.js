@@ -90,7 +90,7 @@ async function albumArtists (request, response, next) {
   const parameter = request.params.albumId
   const albumId = parseInt(parameter)
 
-  console.log('albumId test:', albumId)
+  console.log('albumId test!:', albumId)
 
   try {
     const albums = await Album.findByPk(
