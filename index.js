@@ -4,8 +4,13 @@ const Artist = require('./models').artist
 const Curator = require('./models').curator
 const bcrypt = require('bcryptjs')
 const jsonwebtoken = require('jsonwebtoken')
+const cors = require('cors')
 
 const app = express()
+
+const middleware = cors()
+app.use(middleware)
+
 app.use(express.json())
 
 const secret = process.env.JWT_SECRET || "e9rp^&^*&@9sejg)DSUA)jpfds8394jdsfn,m";
@@ -13,6 +18,7 @@ const secret = process.env.JWT_SECRET || "e9rp^&^*&@9sejg)DSUA)jpfds8394jdsfn,m"
 async function authenticateCurator (
   request, response, next
 ) {
+  console.log('request.headers test:', request.headers)
   const { authorization } = request.headers
 
   if (!authorization) return response
@@ -73,16 +79,17 @@ async function artistAlbums (request, response, next) {
   const artistId = parseInt(parameter)
 
   try {
-    const albums = await Artist.findByPk(
+    const artist = await Artist.findByPk(
       artistId,
       { include: [Album] }
     )
 
-    response.send(albums)
+    response.send(artist)
   } catch (error) {
     next(error)
   }
 }
+// Albums made by an artist
 app.get('/album/artist/:artistId', artistAlbums)
 
 async function albumArtists (request, response, next) {
@@ -93,16 +100,19 @@ async function albumArtists (request, response, next) {
   console.log('albumId test!:', albumId)
 
   try {
-    const albums = await Album.findByPk(
+    const album = await Album.findByPk(
       albumId,
       { include: [Artist] }
     )
 
-    response.send(albums)
+    console.log
+
+    response.send(album)
   } catch (error) {
     next(error)
   }
 }
+// Finds the artists associated with an album
 app.get('/artist/album/:albumId', albumArtists)
 
 async function createCurator (request, response, next) {
@@ -112,8 +122,12 @@ async function createCurator (request, response, next) {
 
   if (!password) return response.send('no password')
 
+  console.log('name test:', name)
+  console.log('password test:', password)
+
   try {
     const hashed = bcrypt.hashSync(password, 10)
+
     const curator = await Curator.create({
       name, password: hashed
     })
