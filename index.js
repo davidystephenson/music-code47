@@ -11,6 +11,8 @@ const app = express()
 const middleware = cors()
 app.use(middleware)
 
+// const bodyParser = express.json()
+// app.use(bodyParser)
 app.use(express.json())
 
 const secret = process.env.JWT_SECRET || "e9rp^&^*&@9sejg)DSUA)jpfds8394jdsfn,m";
